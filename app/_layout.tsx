@@ -5,11 +5,14 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+
+// Context
+import RootContextProvider from "@/context/RootContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,6 +36,8 @@ export default function RootLayout() {
       console.log("Some issue while loading fonts (-layout.tsx) - ", error);
     if (fontsLoaded) {
       SplashScreen.hideAsync(); // When fonts loading is done than hide the Splash screen
+
+      router.push("/now-playing");
     }
   }, [fontsLoaded, error]);
 
@@ -43,10 +48,20 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <RootContextProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="movie-details/index"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="liked-movies/index"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </RootContextProvider>
     </ThemeProvider>
   );
 }
